@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --font-sans: "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --bg-main: #f5f7fb;
+  --bg-white: #ffffff;
+  --text-primary: #0a1172;
+  --primary: #184de5;
+  --primary-muted: #5e5eaa;
+  --primary-dark: #0a1172;
+  --hover-bg: #f1f2f5;
+  --hover-menu-bg: #eef2ff;
+  --border: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+::selection {
+  background: #184de5;
+  color: white;
+}
+
+/* ── Top Navbar links ── */
+.top-nav-link {
+  color: #64748b;
+  transition: color 0.15s;
+  position: relative;
+  cursor: pointer;
+}
+.top-nav-link:hover {
+  color: #184de5;
+}
+.top-nav-link.active {
+  color: #5e5eaa;
+  font-weight: 700;
+}
+.top-nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+
+/* ── Top Navbar icon buttons ── */
+.top-nav-btn {
+  color: #475569;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+.top-nav-btn:hover {
+  background-color: #f1f2f5;
+}
+
+/* ── Mega Menu animation ── */
+.mega-menu-enter {
+  animation: megaFade 0.15s ease;
+}
+@keyframes megaFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Scroll-hide navbar on mobile ── */
+@media (max-width: 1023px) {
+  .navbar-scroll-hide {
+    transition: transform 0.25s ease;
+  }
+  .navbar-scroll-hide.scrolled-down {
+    transform: translateY(-100%);
+  }
+}
