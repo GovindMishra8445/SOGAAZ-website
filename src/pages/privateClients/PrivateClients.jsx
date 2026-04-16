@@ -10,8 +10,6 @@ const PrivateClients = () => {
   return (
     <div className="max-w-[1350px] mx-auto px-4 ">
       <SlideCard />
-      <VideoSlide />
-
       <PopularCard />
       <CalculateInsurance />
       <DownloadAppDesign/>

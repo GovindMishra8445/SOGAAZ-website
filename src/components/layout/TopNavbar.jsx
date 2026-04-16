@@ -1,6 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import { MapPin, User } from "lucide-react";
+import { useEffect } from "react";
 
 const t = {
   en: {
@@ -23,19 +24,28 @@ const t = {
   },
 };
 
-const TopNavbar = () => {
+const TopNavbar = ({ onSupportClick, activeTopTab, setActiveTopTab }) => {
   const { lang, toggleLang } = useLanguage();
   const tx = t[lang];
 
+  const location = useLocation();
+
+useEffect(() => {
+  if (location.pathname === "/") setActiveTopTab("private");
+  else if (location.pathname.includes("business")) setActiveTopTab("business");
+  else if (location.pathname.includes("policy")) setActiveTopTab("policy");
+}, [location.pathname]);
+
   return (
     // hidden on mobile, visible on lg+
-    <div className="hidden lg:block w-full border-b border-gray-200 bg-white">
+    <div className="hidden lg:block sticky top-0 w-full border-b border-gray-200 bg-white">
       <div className="mx-auto px-16 py-3 flex justify-between items-center text-[15px]">
         {/* Left Links */}
         <div className="flex gap-7">
           <NavLink
             to="/"
             end
+            onClick={() => setActiveTopTab("private")}
             className={({ isActive }) =>
               `top-nav-link font-normal ${isActive ? "active" : ""}`
             }
@@ -44,22 +54,27 @@ const TopNavbar = () => {
           </NavLink>
           <NavLink
             to="/business"
+            onClick={() => setActiveTopTab("business")}
             className={({ isActive }) =>
               `top-nav-link font-normal  ${isActive ? "active" : ""}`
             }
           >
             {tx.business}
           </NavLink>
-          <NavLink
-            to="/support"
-            className={({ isActive }) =>
-              `top-nav-link font-normal  ${isActive ? "active" : ""}`
-            }
+          <button
+            onClick={() => {
+              onSupportClick();
+              setActiveTopTab("support");
+            }}
+            className={`top-nav-link font-normal ${
+              activeTopTab === "support" ? "active" : ""
+            }`}
           >
             {tx.support}
-          </NavLink>
+          </button>
           <NavLink
             to="/policy"
+            onClick={() => setActiveTopTab("policy")}
             className={({ isActive }) =>
               `top-nav-link font-normal  ${isActive ? "active" : ""}`
             }

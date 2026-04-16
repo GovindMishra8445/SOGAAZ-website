@@ -1,42 +1,45 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import TopNavbar from "./components/layout/TopNavbar";
 import Navbar from "./components/layout/Navbar";
 import AppRoutes from "./routes/AppRoutes";
 import { LanguageProvider } from "./context/LanguageContext";
+import Footer from "./components/layout/Footer";
+import Support from "./pages/support/Support";
 
 function App() {
-  const [scrolledDown, setScrolledDown] = useState(false);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (window.innerWidth < 1024) {
-        setScrolledDown(currentY > lastScrollY.current && currentY > 60);
-      } else {
-        setScrolledDown(false);
-      }
-      lastScrollY.current = currentY;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [activeTopTab, setActiveTopTab] = useState("private");
 
   return (
     <LanguageProvider>
-      {/* TopNavbar — hidden on mobile via hidden lg:block */}
-      <TopNavbar />
+      
+      {/* TOP NAVBAR */}
+      <div className="hidden lg:block sticky top-0 z-50">
+        <TopNavbar
+  onSupportClick={() => {
+    setSupportOpen(true);
+    setActiveTopTab("support");
+  }}
+  activeTopTab={activeTopTab}
+  setActiveTopTab={setActiveTopTab}
+/>
+      </div>
 
-      {/* Navbar — sticky, hides on scroll-down on mobile */}
-      <div
-        className={`sticky top-0 z-40 navbar-scroll-hide ${
-          scrolledDown ? "scrolled-down" : ""
-        }`}
-      >
+      {/* NAVBAR */}
+      <div className="sticky top-0 lg:top-[63px] z-40">
         <Navbar />
       </div>
 
+      {/* ROUTES */}
       <AppRoutes />
+
+      {/* SUPPORT DRAWER */}
+      <Support
+        isOpen={supportOpen}
+        onClose={() => setSupportOpen(false)}
+      />
+
+      <Footer />
     </LanguageProvider>
   );
 }

@@ -13,27 +13,119 @@ import advisorImg from "../../assets/image/advisor.png";
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 
+import charVideo from "../../assets/video/char.mp4";
+import airplaneVideo from "../../assets/video/airplane.mp4";
+import flowersVideo from "../../assets/video/flowers.mp4";
+import carVideo from "../../assets/video/osas-car.mp4";
+import mortgageVideo from "../../assets/video/mortgage.mp4";
+import blueCarVideo from "../../assets/video/car-blue.mp4";
+import { useLanguage } from "../../context/LanguageContext";
+
 export const cardsData = {
   BUY: [
-    { title: "Apartment", img: chairImg, video: "/video/char.mp4" },
-    { title: "Traveling abroad", img: globeImg, video: "/video/airplane.mp4" },
-    { title: "Voluntary health insurance", img: flowerImg, video: "/video/flowers.mp4" },
-    { title: "OSAGO", img: carImg, video: "/video/osas-car.mp4" },
-    { title: "Mortgage", img: keyImg, video: "/video/mortgage.mp4" },
-    { title: "CASCO", img: blueCarImg, video: "/video/car-blue.mp4" },
+    {
+      title: { en: "Apartment", ru: "Квартира" },
+      img: chairImg,
+      video: charVideo,
+    },
+    {
+      title: { en: "Traveling abroad", ru: "Путешествие" },
+      img: globeImg,
+      video: airplaneVideo,
+    },
+    {
+      title: { en: "Health insurance", ru: "Медицинское страхование" },
+      img: flowerImg,
+      video: flowersVideo,
+    },
+    { title: { en: "OSAGO", ru: "ОСАГО" }, img: carImg, video: carVideo },
+    {
+      title: { en: "Mortgage", ru: "Ипотека" },
+      img: keyImg,
+      video: mortgageVideo,
+    },
+    {
+      title: { en: "CASCO", ru: "КАСКО" },
+      img: blueCarImg,
+      video: blueCarVideo,
+    },
   ],
   ACTIVATE: [
-    { title: "Protect your home!", desc: "For clients of VTB PJSC and Zapsibkombank", img: protectHomeImg, video: "/video/protect-home.mp4" },
-    { title: "Fidget", desc: "Protect children from accidents", img: fidgetImg, video: "/video/fidget.mp4" },
-    { title: "Live confidently", desc: "Oncology treatment program", img: liveImg, video: "/video/live.mp4" },
-    { title: "Ask the doctor", desc: "Telemedicine", img: doctorImg, video: "/video/doctor.mp4" },
-    { title: "Personnel Advisor", desc: "Financial protection", img: advisorImg, video: "/video/advisor.mp4" },
+    {
+      title: {
+        en: "Protect your home!",
+        ru: "Защитите свой дом!",
+      },
+      desc: {
+        en: "For clients of VTB PJSC and Zapsibkombank",
+        ru: "Для клиентов ВТБ и Запсибкомбанка",
+      },
+      img: protectHomeImg,
+    },
+    {
+      title: {
+        en: "Fidget",
+        ru: "Непоседа",
+      },
+      desc: {
+        en: "Protect children from accidents",
+        ru: "Защита детей от несчастных случаев",
+      },
+      img: fidgetImg,
+    },
+    {
+      title: {
+        en: "Live confidently",
+        ru: "Живите уверенно",
+      },
+      desc: {
+        en: "Oncology treatment program",
+        ru: "Программа лечения онкологических заболеваний",
+      },
+      img: liveImg,
+    },
+    {
+      title: {
+        en: "Ask the doctor",
+        ru: "Спросить врача",
+      },
+      desc: {
+        en: "Telemedicine",
+        ru: "Телемедицина",
+      },
+      img: doctorImg,
+    },
+    {
+      title: {
+        en: "Personnel Advisor",
+        ru: "Персональный советник",
+      },
+      desc: {
+        en: "Financial protection",
+        ru: "Финансовая защита",
+      },
+      img: advisorImg,
+    },
   ],
+};
+
+const t = {
+  en: {
+    popular: "Popular",
+    buy: "Buy",
+    activate: "Activate",
+  },
+  ru: {
+    popular: "Популярное",
+    buy: "Купить",
+    activate: "Активировать",
+  },
 };
 
 // Single card component
 const InsuranceCard = ({ card, index, hovered, setHovered }) => {
   const isHovered = hovered === index;
+  const { lang } = useLanguage();
 
   return (
     <div
@@ -45,10 +137,12 @@ const InsuranceCard = ({ card, index, hovered, setHovered }) => {
       {/* TOP: Title + desc */}
       <div className="z-10 relative">
         <h3 className="text-lg font-bold text-gray-900 max-w-[200px] leading-snug">
-          {card.title}
+          {card.title[lang] || card.title.en}
         </h3>
         {card.desc && (
-          <p className="text-sm mt-1 text-gray-400 max-w-[200px]">{card.desc}</p>
+          <p className="text-sm mt-1 text-gray-400 max-w-[200px]">
+            {card.desc?.[lang] || card.desc?.en}
+          </p>
         )}
       </div>
 
@@ -66,24 +160,27 @@ const InsuranceCard = ({ card, index, hovered, setHovered }) => {
       </div>
 
       {/* IMAGE / VIDEO — bottom-right, same position always */}
-      <div
-        className="absolute bottom-4 right-4"
-        style={{ width: "120px", height: "120px" }}
-      >
-        {isHovered ? (
+      <div className="absolute bottom-4 right-4 w-[120px] h-[120px]">
+        {/* IMAGE */}
+        <img
+          src={card.img}
+          alt=""
+          className={`w-full h-full object-contain transition-opacity ${
+            isHovered && card.video ? "opacity-0" : "opacity-100"
+          }`}
+        />
+
+        {/* VIDEO (only if exists) */}
+        {card.video && (
           <video
             src={card.video}
             autoPlay
             muted
             loop
             playsInline
-            className="w-full h-full object-contain"
-          />
-        ) : (
-          <img
-            src={card.img}
-            alt={card.title}
-            className="w-full h-full object-contain"
+            className={`absolute top-0 left-0 w-full h-full object-contain transition-opacity ${
+              isHovered ? "opacity-100" : "opacity-0"
+            }`}
           />
         )}
       </div>
@@ -97,30 +194,38 @@ const PopularCard = () => {
 
   const cards = cardsData[activeTab];
   const isBuy = activeTab === "BUY";
+  const { lang } = useLanguage();
+  const tx = t[lang];
 
   return (
     <div className="mt-16">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Popular</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{tx.popular}</h2>
 
         {/* Tab buttons — BUY | ACTIVATE */}
         <div className="flex bg-white rounded-full p-1 gap-1">
-          {["BUY", "ACTIVATE"].map((tab) => (
+          {[
+            { key: "BUY", label: tx.buy },
+            { key: "ACTIVATE", label: tx.activate },
+          ].map((tab) => (
             <button
-              key={tab}
+              key={tab.key}
               onClick={() => {
-                setActiveTab(tab);
+                setActiveTab(tab.key);
                 setHovered(null);
               }}
               className="px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer"
               style={{
-                border: activeTab === tab ? "1.5px solid #2563EB" : "1.5px solid transparent",
-                color: activeTab === tab ? "#2563EB" : "#6B7280",
+                border:
+                  activeTab === tab.key
+                    ? "1.5px solid #2563EB"
+                    : "1.5px solid transparent",
+                color: activeTab === tab.key ? "#2563EB" : "#6B7280",
                 background: "transparent",
               }}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>

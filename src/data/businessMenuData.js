@@ -1,6 +1,6 @@
-export const menuData = [
+export const businessMenuData = [
   {
-    title: { en: "Transport", ru: "Транспорт" },
+    title: { en: "Responsibility", ru: "Ответственность" },
     megaMenu: [
       {
         category: { en: "Motor transport", ru: "Автотранспорт" },
@@ -21,7 +21,7 @@ export const menuData = [
     ],
   },
   {
-    title: { en: "Real estate", ru: "Недвижимость" },
+    title: { en: "Property", ru: "Имущество" },
     megaMenu: [
       {
         category: { en: "Mortgage", ru: "Ипотека" },
@@ -98,7 +98,7 @@ export const menuData = [
     ],
   },
   {
-    title: { en: "Trips", ru: "Поездки" },
+    title: { en: "Transport", ru: "Транспорт" },
     megaMenu: [
       {
         category: { en: "", ru: "" },
@@ -128,7 +128,7 @@ export const menuData = [
     ],
   },
   {
-    title: { en: "Health", ru: "Здоровье" },
+    title: { en: "Staff", ru: "Персонал" },
     megaMenu: [
       {
         category: {
@@ -206,7 +206,25 @@ export const menuData = [
     ],
   },
   {
-    title: { en: "Life and savings", ru: "Жизнь и накопления" },
+    title: { en: "Industries", ru: "Отрасли" },
+    megaMenu: [
+
+      {
+        category: null,
+        items: [{ title: { en: "Pension capital", ru: "Пенсионный капитал" } }],
+      },
+      {
+        category: null,
+        items: [{ title: { en: "Liquid capital", ru: "Ликвидный капитал" } }],
+      },
+      {
+        category: null,
+        items: [{ title: { en: "Accurate calculation", ru: "Точный расчёт" } }],
+      },
+    ],
+  },
+  {
+    title: { en: "Reinsurance", ru: "Перестрахование" },
     megaMenu: [
 
       {
