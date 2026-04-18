@@ -49,10 +49,10 @@ const SogazInfoSection = () => {
 
   return (
     <div className="mt-20 px-4">
-      <div className="max-w-[1200px] mx-auto">
+      <div className="mx-auto">
         {/* 🔥 TITLE */}
         <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-10">
-          SOGAZ is
+          SOGAAZ is
         </h2>
 
         {/* 🔥 CARDS */}
@@ -60,9 +60,9 @@ const SogazInfoSection = () => {
           {items.map((item, index) => (
             <div
               key={index}
-              className={`relative rounded-3xl p-8 transition-all duration-300 ${
+              className={`relative rounded-3xl gap-6 p-8 transition-all duration-300 ${
                 item.highlight
-                  ? "bg-gradient-to-br from-blue-700 to-blue-500 text-white shadow-lg"
+                  ? "bg-gradient-to-br from-blue-700 to-blue-500 text-white shadow-lg scale-105 md:scale-110 min-h-[280px]"
                   : "bg-white text-gray-800 hover:shadow-md"
               }`}
             >

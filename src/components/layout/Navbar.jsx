@@ -8,8 +8,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Zap, Menu, X } from "lucide-react";
 
 const t = {
-  en: { insuranceEvent: "Insurance event" },
-  ru: { insuranceEvent: "Страховой случай" },
+  en: { insuranceEvent: "Insurance event", logo: "SOGAAZ" },
+  ru: { insuranceEvent: "Страховой случай", logo: "СОГАAЗ" },
 };
 
 const Navbar = () => {
@@ -60,7 +60,7 @@ const currentMenuData = isBusiness ? businessMenuData : menuData;
 
             {/* Logo always right beside the icon */}
             <Link to="/" className="flex-shrink-0">
-              <svg width="80" height="28" viewBox="0 0 120 36">
+             <svg width="130" height="28" viewBox="0 0 120 36">
                 <text
                   x="0"
                   y="28"
@@ -69,7 +69,7 @@ const currentMenuData = isBusiness ? businessMenuData : menuData;
                   fontSize="30"
                   fill="#0A1172"
                 >
-                  СОГАЗ
+                  {tx.logo}
                 </text>
               </svg>
             </Link>

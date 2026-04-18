@@ -2,6 +2,7 @@ import { useLanguage } from "../../context/LanguageContext";
 
 const tagStyles = {
   ONLINE: "text-green-600 font-bold text-[11px] tracking-wide",
+  REQUEST: "text-green-600 font-bold text-[11px] tracking-wide",
   BID: "text-[#184DE5] font-bold text-[11px] tracking-wide",
 };
 

@@ -4,14 +4,18 @@ import PrivateClients from "../pages/privateClients/PrivateClients";
 import Business from "../pages/business/Business";
 import Support from "../pages/support/Support";
 import PolicyActivation from "../pages/policy/PolicyActivation";
+import ApartmentInsurance from "../components/common/ApartmentInsurance";
+import Login from "../pages/auth/login";
 
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* <Route path="/login" element={<Login />} /> */}
       <Route path="/" element={<PrivateClients />} />
       <Route path="/business" element={<Business />} />
-      {/* <Route path="/support" element={<Support />} /> */}
+      <Route path="/support" element={<Support />} />
       <Route path="/policy" element={<PolicyActivation />} />
+      <Route path="/apartment-insurance" element={<ApartmentInsurance />} />
     </Routes>
   );
 };

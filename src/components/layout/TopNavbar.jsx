@@ -24,17 +24,23 @@ const t = {
   },
 };
 
-const TopNavbar = ({ onSupportClick, activeTopTab, setActiveTopTab }) => {
+const TopNavbar = ({
+  onSupportClick,
+  activeTopTab,
+  setActiveTopTab,
+  onLoginClick,
+}) => {
   const { lang, toggleLang } = useLanguage();
   const tx = t[lang];
 
   const location = useLocation();
 
-useEffect(() => {
-  if (location.pathname === "/") setActiveTopTab("private");
-  else if (location.pathname.includes("business")) setActiveTopTab("business");
-  else if (location.pathname.includes("policy")) setActiveTopTab("policy");
-}, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname === "/") setActiveTopTab("private");
+    else if (location.pathname.includes("business"))
+      setActiveTopTab("business");
+    else if (location.pathname.includes("policy")) setActiveTopTab("policy");
+  }, [location.pathname]);
 
   return (
     // hidden on mobile, visible on lg+
@@ -127,7 +133,10 @@ useEffect(() => {
           </button>
 
           {/* Login */}
-          <button className="top-nav-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-gray-600">
+          <button
+            onClick={onLoginClick}
+            className="top-nav-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-gray-600"
+          >
             <User size={15} strokeWidth={1.8} />
             {tx.login}
           </button>

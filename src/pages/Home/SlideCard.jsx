@@ -8,6 +8,7 @@ import videoFile from "../../assets/video/blue-cat.mp4";
 
 // QR code placeholder - replace with your actual QR image import
 import qrImg from "../../assets/image/black-qr.svg";
+import { Link } from "react-router-dom";
 
 const slides = [
   {
@@ -197,7 +198,7 @@ const SlideCard = () => {
           </div>
 
           {/* IMAGE or VIDEO - fills bottom of card */}
-          <div className="absolute bottom-0 right-0 w-full h-full flex items-end justify-end">
+          <Link to="/apartment-insurance" className="absolute bottom-0 right-0 w-full h-full flex items-end justify-end">
             {!showVideo ? (
               <img
                 src={catImg}
@@ -214,7 +215,7 @@ const SlideCard = () => {
                 className="h-full w-full object-cover"
               />
             )}
-          </div>
+          </Link>
         </div>
       </div>
     </div>
