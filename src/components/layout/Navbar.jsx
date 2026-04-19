@@ -40,7 +40,7 @@ const currentMenuData = isBusiness ? businessMenuData : menuData;
         className="sticky top-0 z-40 w-full bg-white border-b border-gray-200"
         onMouseLeave={handleLeave}
       >
-        <div className="flex items-center h-[64px] pl-4 lg:pl-16">
+        <div className="flex items-center h-[68px] pl-4 lg:pl-10">
           {/* ── LEFT: Toggle icon + Logo ── */}
           <div className="flex items-center gap-3 flex-shrink-0">
             {/* 
@@ -76,7 +76,7 @@ const currentMenuData = isBusiness ? businessMenuData : menuData;
           </div>
 
           {/* ── MIDDLE: Desktop nav items ── */}
-          <ul className="hidden lg:flex items-stretch flex-1 h-full ml-6">
+          <ul className="hidden lg:flex items-stretch flex-1 h-full ml-4">
             {currentMenuData.map((menu, index) => (
               <li
                 key={index}
@@ -84,7 +84,7 @@ const currentMenuData = isBusiness ? businessMenuData : menuData;
                 onMouseEnter={() => handleEnter(index)}
               >
                 <button
-                  className={`h-full px-5 text-sm font-semibold cursor-pointer transition-colors relative whitespace-nowrap ${
+                  className={`h-full px-5 text-xl font-normal cursor-pointer transition-colors relative whitespace-nowrap ${
                     active === index
                       ? "text-[#5E5EAA]"
                       : "text-gray-700 hover:text-[#184DE5]"

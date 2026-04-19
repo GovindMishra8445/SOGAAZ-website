@@ -1,6 +1,6 @@
 import { useLanguage } from "../../context/LanguageContext";
-import qrImg from "../../assets/image/black-qr.svg"; // 👉 apna QR image
-import phoneImg from "../../assets/image/app-screen-tablet.png"; // 👉 app mobile image
+import qrImg from "../../assets/image/black-qr.svg"; 
+import phoneImg from "../../assets/image/app-screen/app-screen-tablet.png";
 import SogazInfoSection from "./SogazInfoSection";
 
 const t = {

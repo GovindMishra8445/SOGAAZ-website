@@ -132,15 +132,15 @@ const InsuranceCard = ({ card, index, hovered, setHovered }) => {
       onMouseEnter={() => setHovered(index)}
       onMouseLeave={() => setHovered(null)}
       className="relative rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 cursor-pointer bg-white hover:shadow-md overflow-hidden"
-      style={{ minHeight: "190px" }}
+      style={{ minHeight: "220px" }}
     >
       {/* TOP: Title + desc */}
       <div className="z-10 relative">
-        <h3 className="text-lg font-bold text-gray-900 max-w-[200px] leading-snug">
+        <h1 className="text-3xl font-bold text-gray-900 max-w-[250px] leading-snug">
           {card.title[lang] || card.title.en}
-        </h3>
+        </h1>
         {card.desc && (
-          <p className="text-sm mt-1 text-gray-400 max-w-[200px]">
+          <p className="text-sm mt-1 text-gray-400 max-w-[250px]">
             {card.desc?.[lang] || card.desc?.en}
           </p>
         )}
@@ -201,33 +201,35 @@ const PopularCard = () => {
     <div className="mt-16">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">{tx.popular}</h2>
+        <h2 className="text-4xl font-normal text-gray-900">{tx.popular}</h2>
 
         {/* Tab buttons — BUY | ACTIVATE */}
-        <div className="flex bg-white rounded-full p-1 gap-1">
+
+        <div className="flex bg-white rounded-xl p-1 gap-1">
           {[
             { key: "BUY", label: tx.buy },
             { key: "ACTIVATE", label: tx.activate },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => {
-                setActiveTab(tab.key);
-                setHovered(null);
-              }}
-              className="px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer"
-              style={{
-                border:
-                  activeTab === tab.key
-                    ? "1.5px solid #2563EB"
-                    : "1.5px solid transparent",
-                color: activeTab === tab.key ? "#2563EB" : "#6B7280",
-                background: "transparent",
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+          ].map((tab) => {
+            const isActive = activeTab === tab.key;
+
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`
+          px-5 py-1.5 rounded-xl text-sm font-medium transition-all cursor-pointer border
+
+          ${
+            isActive
+              ? "border-blue-500 text-blue-600 bg-white"
+              : "border-transparent text-gray-600 hover:bg-[#F2F8FF]"
+          }
+        `}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -280,8 +282,8 @@ const PopularCard = () => {
       {!isBuy && (
         <div className="flex justify-center mt-8">
           <button
-            className="px-10 py-3 rounded-full text-sm font-semibold text-white transition-all"
-            style={{ background: "#1D4ED8" }}
+            className="px-8 py-3 rounded-2xl text-s font-semibold text-white transition-all hover:bg-[#184DE5]"
+            style={{ background: "#000078" }}
           >
             All
           </button>

@@ -13,13 +13,22 @@ import SogaazTrust from "./SogaazTrust";
 
 const Business = () => {
   return (
-    <div className="max-w-[1350px] mx-auto px-4 ">
-      <BusinessSlideCard />
-      <BusinessPopularCard />
-      <BusinessAllProducts />
+    <>
+      {/* ── Constrained content ── */}
+      <div className="max-w-[1350px] mx-auto px-4">
+        <BusinessSlideCard />
+        <BusinessPopularCard />
+        <BusinessAllProducts />
+      </div>
+
+      {/* ── Full width — bg handled inside component ── */}
       <BusinessIndustrySolutions />
-      <SogaazTrust />
-    </div>
+
+      {/* ── Constrained content continues ── */}
+      <div className="max-w-[1350px] mx-auto px-4">
+        <SogaazTrust />
+      </div>
+    </>
   );
 };
 

@@ -19,8 +19,8 @@ import { useLanguage } from "../../context/LanguageContext";
 
 // ─── Translations ────────────────────────────────────────────────────────────
 const t = {
-  en: { popular: "Popular", heading: "Popular products" },
-  ru: { popular: "Популярные", heading: "Популярные продукты" },
+  en: { popular: "Popular", heading: "Popular" },
+  ru: { popular: "Популярные", heading: "Популярные" },
 };
 
 // ─── Cards Data ───────────────────────────────────────────────────────────────
@@ -103,7 +103,7 @@ const InsuranceCard = ({ card, index, hovered, setHovered }) => {
       onMouseLeave={handleMouseLeave}
       className="relative rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 cursor-pointer bg-white overflow-hidden"
       style={{
-        minHeight: "190px",
+        minHeight: "220px",
         boxShadow: isHovered
           ? "0 8px 32px rgba(37,99,235,0.13)"
           : "0 1px 4px rgba(0,0,0,0.06)",
@@ -112,11 +112,11 @@ const InsuranceCard = ({ card, index, hovered, setHovered }) => {
     >
       {/* TOP: Title + desc */}
       <div className="z-10 relative">
-        <h3 className="text-lg font-bold text-gray-900 max-w-[200px] leading-snug">
+        <h1 className="text-3xl font-bold text-gray-900 max-w-[250px] leading-snug">
           {card.title[lang] || card.title.en}
-        </h3>
+        </h1>
         {card.desc && (
-          <p className="text-sm mt-1 text-gray-400 max-w-[200px]">
+          <p className="text-sm mt-1 text-gray-400 max-w-[250px]">
             {card.desc[lang] || card.desc.en}
           </p>
         )}
@@ -165,7 +165,7 @@ const BusinessPopularCard = () => {
     <div className="mt-16">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">{tx.heading}</h2>
+        <h2 className="text-4xl font-normal text-gray-900">{tx.heading}</h2>
       </div>
 
       {/* GRID — 6 cards, 3 columns × 2 rows */}

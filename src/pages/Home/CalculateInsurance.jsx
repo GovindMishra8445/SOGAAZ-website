@@ -69,7 +69,7 @@ const t = {
 
     tabs: {
       APARTMENT: "Apartment",
-      OSAGO: "COMPULSORY MOTOR THIRD PARTY LIABILITY INSURANCE",
+      OSAGO: "Compulsory Motor Third Party Liability Insurance",
       TRIPS: "Trips",
       HEALTH: "Health",
     },
@@ -140,20 +140,20 @@ const CalculateInsurance = () => {
     <div className="mt-16 px-4 md:px-8 lg:px-0">
       {/* Header row */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">
+        <h2 className="text-4xl font-normal text-gray-900">
           {tx.calcInsurance}
         </h2>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-white p-1 rounded-full overflow-x-auto flex-shrink-0 shadow-sm">
+        <div className="flex gap-1 p-1.5 bg-white rounded-2xl overflow-x-auto flex-shrink-0 shadow-sm">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-3 py-1.5 text-[11px] font-semibold rounded-full ${
+              className={`flex-1 uppercase text-center cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap rounded-xl transition ${
                 activeTab === tab.key
-                  ? "border border-[#184DE5] text-[#184DE5]"
-                  : "text-gray-500"
+                  ? "border border-blue-500 text-blue-600 font-medium bg-[#F2F8FF]"
+                  : "text-gray-600 hover:bg-[#F2F8FF]"
               }`}
             >
               {tx.tabs[tab.key]}
