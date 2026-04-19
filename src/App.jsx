@@ -21,7 +21,7 @@ function App() {
             setSupportOpen(true);
             setActiveTopTab("support");
           }}
-          onLoginClick={() => setLoginOpen(true)} // ✅ ADD THIS
+          onLoginClick={() => setLoginOpen(true)}
           activeTopTab={activeTopTab}
           setActiveTopTab={setActiveTopTab}
         />
