@@ -5,6 +5,8 @@ import Business from "../pages/business/Business";
 import Support from "../pages/support/Support";
 import PolicyActivation from "../pages/policy/PolicyActivation";
 import ApartmentInsurance from "../components/common/ApartmentInsurance";
+import Login from "../pages/auth/login";
+import ComingSoon from "../components/common/ComingSoon";
 
 const AppRoutes = () => {
   return (
@@ -12,7 +14,7 @@ const AppRoutes = () => {
       <Route path="/" element={<PrivateClients />} />
       <Route path="/business" element={<Business />} />
       <Route path="/support" element={<Support />} />
-      <Route path="/policy" element={<PolicyActivation />} />
+      <Route path="/policy" element={<ComingSoon />} />
       <Route path="/apartment-insurance" element={<ApartmentInsurance />} />
     </Routes>
   );
