@@ -10,18 +10,18 @@ const data = {
       {
         title: "Online store",
         phone: "+7 (800) 333 08-88",
-        link: "shop.sogaz.ru",
+        link: "shop.sogaaz.ru",
       },
-      { title: "EOSAGO", phone: "+7 (800) 333 08 88", link: "direct.sogaz.ru" },
+      { title: "EOSAGO", phone: "+7 (800) 333 08 88", link: "direct.sogaaz.ru" },
       {
         title: "Life insurance",
         phone: "+7 (800) 600-04-40",
-        link: "sogaz-life.ru",
+        link: "sogaaz-life.ru",
       },
       {
         title: "Compulsory Medical Insurance",
         phone: "+7 (800) 100 07 02",
-        link: "sogaz-med.ru",
+        link: "sogaaz-med.ru",
       },
       {
         title: "Scientific Complex",
@@ -33,39 +33,39 @@ const data = {
       {
         title: "Polyclinic",
         phone: "+7 (495) 134 11-22",
-        link: "sogaz-polyclinic.ru",
+        link: "sogaaz-polyclinic.ru",
       },
       {
         title: "MedService",
         phone: "+7 (495) 146 95-55",
-        link: "sogaz-medservice.ru",
+        link: "sogaaz-medservice.ru",
       },
       {
         title: "Electronic registration",
         phone: "+7 (800) 333 08-88",
-        link: "medonline.sogaz.ru",
+        link: "medonline.sogaaz.ru",
       },
       {
         title: "Compulsory Medical Insurance",
         phone: "+7 (800) 100 07-02",
-        link: "sogaz-med.ru",
+        link: "sogaaz-med.ru",
       },
     ],
     customer: [
       {
         title: "Corporate website",
         phone: "+7 (800) 333 08 88",
-        link: "sogaz.ru",
+        link: "sogaaz.ru",
       },
       {
         title: "Settlement of losses",
         phone: "+7 (800) 333 08 88",
-        link: "claim.sogaz.ru",
+        link: "claim.sogaaz.ru",
       },
       {
         title: "Custom solutions service",
         phone: "+7 (800) 333 08 88",
-        link: "my.sogaz.ru",
+        link: "my.sogaaz.ru",
       },
     ],
   },
@@ -75,15 +75,15 @@ const data = {
       {
         title: "Интернет-магазин",
         phone: "+7 (800) 333 08-88",
-        link: "shop.sogaz.ru",
+        link: "shop.sogaaz.ru",
       },
-      { title: "ЕОСАГО", phone: "+7 (800) 333 08 88", link: "direct.sogaz.ru" },
+      { title: "ЕОСАГО", phone: "+7 (800) 333 08 88", link: "direct.sogaaz.ru" },
       {
         title: "Страхование жизни",
         phone: "+7 (800) 600-04-40",
-        link: "sogaz-life.ru",
+        link: "sogaaz-life.ru",
       },
-      { title: "ОМС", phone: "+7 (800) 100 07 02", link: "sogaz-med.ru" },
+      { title: "ОМС", phone: "+7 (800) 100 07 02", link: "sogaaz-med.ru" },
       {
         title: "Научный комплекс",
         phone: "+7 (495) 587 80-19",
@@ -94,17 +94,17 @@ const data = {
       {
         title: "Поликлиника",
         phone: "+7 (495) 134 11-22",
-        link: "sogaz-polyclinic.ru",
+        link: "sogaaz-polyclinic.ru",
       },
       {
         title: "МедСервис",
         phone: "+7 (495) 146 95-55",
-        link: "sogaz-medservice.ru",
+        link: "sogaaz-medservice.ru",
       },
       {
         title: "Электронная запись",
         phone: "+7 (800) 333 08-88",
-        link: "medonline.sogaz.ru",
+        link: "medonline.sogaaz.ru",
       },
       { title: "ОМС", phone: "+7 (800) 100 07-02", link: "sogaz-med.ru" },
     ],
@@ -112,17 +112,17 @@ const data = {
       {
         title: "Корпоративный сайт",
         phone: "+7 (800) 333 08 88",
-        link: "sogaz.ru",
+        link: "sogaaz.ru",
       },
       {
         title: "Урегулирование убытков",
         phone: "+7 (800) 333 08 88",
-        link: "claim.sogaz.ru",
+        link: "claim.sogaaz.ru",
       },
       {
         title: "Индивидуальные решения",
         phone: "+7 (800) 333 08 88",
-        link: "my.sogaz.ru",
+        link: "my.sogaaz.ru",
       },
     ],
   },

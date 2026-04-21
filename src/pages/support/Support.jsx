@@ -247,7 +247,7 @@ const translations = {
   en: {
     title: "Support",
     subtitle:
-      "SOGAZ strives to make policy issuance and claims settlement as convenient as possible.",
+      "SOGAAZ strives to make policy issuance and claims settlement as convenient as possible.",
     selectOption: "Select an insurance option *",
     selectTopic: "Select a topic *",
     namePlaceholder: "Last name First name *",
@@ -369,7 +369,7 @@ const translations = {
   ru: {
     title: "Поддержка",
     subtitle:
-      "СОГАЗ стремится сделать оформление полисов и урегулирование убытков максимально удобным.",
+      "СОГАAЗ стремится сделать оформление полисов и урегулирование убытков максимально удобным.",
     selectOption: "Выберите вид страхования *",
     selectTopic: "Выберите тему *",
     namePlaceholder: "Фамилия Имя *",

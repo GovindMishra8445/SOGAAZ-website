@@ -57,34 +57,34 @@ const SogazInfoSection = () => {
       {
         id: "01",
         title: "November 21, 2025",
-        desc: "ACRA upgraded SOGAZ rating",
+        desc: "ACRA upgraded SOGAAZ rating",
       },
       {
         id: "02",
         title: "November 17, 2025",
-        desc: "SOGAZ compensated 3.2B rubles",
+        desc: "SOGAAZ compensated 3.2B rubles",
       },
       {
         id: "03",
         title: "November 14, 2025",
-        desc: "SOGAZ offers modular programs",
+        desc: "SOGAAZ offers modular programs",
       },
     ],
     ru: [
       {
         id: "01",
         title: "21 ноября 2025",
-        desc: "АКРА повысило рейтинг СОГАЗ",
+        desc: "АКРА повысило рейтинг СОГАAЗ",
       },
       {
         id: "02",
         title: "17 ноября 2025",
-        desc: "СОГАЗ выплатил 3.2 млрд рублей",
+        desc: "СОГAАЗ выплатил 3.2 млрд рублей",
       },
       {
         id: "03",
         title: "14 ноября 2025",
-        desc: "СОГАЗ предлагает программы",
+        desc: "СОГАAЗ предлагает программы",
       },
     ],
   };

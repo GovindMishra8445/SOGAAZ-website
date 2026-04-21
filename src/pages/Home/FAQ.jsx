@@ -10,7 +10,7 @@ const faqData = {
         "Currently, this is only possible for certain products. A full list of these products and how to apply is available here.",
     },
     {
-      question: "How to register in your SOGAZ personal account?",
+      question: "How to register in your SOGAAZ personal account?",
       answer:
         "To register, provide your email and phone number. Detailed instructions are available here.",
     },
@@ -25,17 +25,17 @@ const faqData = {
         "You can explore products, compare terms, and calculate costs. Contact specialists at 8 800 333 08 88 for help.",
     },
     {
-      question: "Where can I find the nearest SOGAZ office?",
+      question: "Where can I find the nearest SOGAAZ office?",
       answer:
         "Office addresses are listed in the Contacts section. You can also check hours and book appointments.",
     },
     {
-      question: "How to contact SOGAZ customer support?",
+      question: "How to contact SOGAAZ customer support?",
       answer:
         "Call 8 800 333 08 88, use personal account, mobile app, chat, or feedback form.",
     },
     {
-      question: "How can I restore access to my SOGAZ personal account?",
+      question: "How can I restore access to my SOGAAZ personal account?",
       answer:
         'Use "Forgot your password?" on login page. Instructions will be sent to your email.',
     },
@@ -53,7 +53,7 @@ const faqData = {
         "В настоящее время это возможно только для некоторых продуктов. Полный список и инструкции доступны здесь.",
     },
     {
-      question: "Как зарегистрироваться в личном кабинете СОГАЗ?",
+      question: "Как зарегистрироваться в личном кабинете СОГAАЗ?",
       answer:
         "Для регистрации укажите email и номер телефона. Подробная инструкция доступна здесь.",
     },
@@ -68,17 +68,17 @@ const faqData = {
         "Вы можете изучить продукты, сравнить условия и рассчитать стоимость. Свяжитесь со специалистами по телефону 8 800 333 08 88.",
     },
     {
-      question: "Где найти ближайший офис СОГАЗ?",
+      question: "Где найти ближайший офис СОГAАЗ?",
       answer:
         "Адреса офисов указаны в разделе Контакты. Также можно узнать график работы и записаться.",
     },
     {
-      question: "Как связаться со службой поддержки СОГАЗ?",
+      question: "Как связаться со службой поддержки СОГAАЗ?",
       answer:
         "Позвоните по номеру 8 800 333 08 88 или используйте личный кабинет, мобильное приложение, чат.",
     },
     {
-      question: "Как восстановить доступ к личному кабинету СОГАЗ?",
+      question: "Как восстановить доступ к личному кабинету СОГAАЗ?",
       answer:
         'Используйте "Забыли пароль?" на странице входа. Инструкции придут на email.',
     },

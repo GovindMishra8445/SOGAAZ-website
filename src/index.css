@@ -21,6 +21,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+
   font-family: var(--font-sans);
   background-color: var(--bg-main);
   color: var(--text-primary);
@@ -54,6 +55,7 @@ body {
   height: 2px;
 }
 
+
 /* ── Top Navbar icon buttons ── */
 .top-nav-btn {
   color: #475569;
@@ -71,6 +73,20 @@ body {
 /* ── Mega Menu animation ── */
 .mega-menu-enter {
   animation: megaFade 0.15s ease;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input:focus {
+  border-color: #0a1172;
+  box-shadow: 0 0 0 2px rgba(10, 17, 114, 0.1);
 }
 @keyframes megaFade {
   from {

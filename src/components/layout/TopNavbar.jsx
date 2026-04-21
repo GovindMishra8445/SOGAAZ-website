@@ -28,7 +28,6 @@ const TopNavbar = ({
   onSupportClick,
   activeTopTab,
   setActiveTopTab,
-  onLoginClick,
 }) => {
   const { lang, toggleLang } = useLanguage();
   const tx = t[lang];
@@ -87,6 +86,15 @@ const TopNavbar = ({
           >
             {tx.policy}
           </NavLink>
+
+          <NavLink
+            to="/verify-certificate"
+            className={({ isActive }) =>
+              `top-nav-link font-normal ${isActive ? "active" : ""}`
+            }
+          >
+            Verify Certificate
+          </NavLink>
         </div>
 
         {/* Right */}
@@ -133,13 +141,13 @@ const TopNavbar = ({
           </button>
 
           {/* Login */}
-          <button
+          {/* <button
             onClick={onLoginClick}
             className="top-nav-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-gray-600"
           >
             <User size={15} strokeWidth={1.8} />
             {tx.login}
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
