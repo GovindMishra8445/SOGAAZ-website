@@ -1,0 +1,31 @@
+# Render Blueprint — New + → Blueprint → pick this repo.
+# (Or create a Web Service by hand with the same settings.)
+services:
+  - type: web
+    name: sogaaz-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: COOKIE_SAMESITE
+        value: strict
+      - key: LOG_LEVEL
+        value: info
+      # Secrets — paste values from backend/.env.production in the Render dashboard
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

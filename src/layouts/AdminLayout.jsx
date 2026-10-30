@@ -1,112 +1,98 @@
-// import { NavLink, Outlet } from "react-router-dom";
-// import Breadcrumb from "../pages/admin/Breadcrumb";
-
-// const AdminLayout = () => {
-//   const linkClass = ({ isActive }) =>
-//     `block px-4 py-2 rounded-lg transition ${
-//       isActive
-//         ? "bg-white text-[#0A1172] font-semibold"
-//         : "text-gray-300 hover:bg-white/10"
-//     }`;
-
-//   return (
-//     <div className="flex min-h-screen">
-
-//       {/* SIDEBAR */}
-//       <div className="w-64 bg-[#0A1172] text-white p-5">
-//         <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
-
-//         <nav className="space-y-2">
-//           <NavLink to="/admin/dashboard" className={linkClass}>
-//             Dashboard
-//           </NavLink>
-
-//           <NavLink to="/admin/add-certificate" className={linkClass}>
-//             Add Certificate
-//           </NavLink>
-//         </nav>
-//       </div>
-
-//       {/* MAIN CONTENT */}
-//       <div className="flex-1 bg-gray-100 p-6">
-//       <Breadcrumb /> 
-//         <Outlet />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminLayout;
-
-import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  LayoutDashboard, FilePlus, LogOut, Shield,
-  ChevronLeft, ChevronRight, Menu, X, Bell, Plus,
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import {
+  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ExternalLink,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Plus,
+  Settings,
+  X,
 } from "lucide-react";
-import { useState } from "react";
-import Breadcrumb from "../pages/admin/Breadcrumb";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
+import { certificateApi } from "../lib/api";
+import {
+  BrandMark,
+  Button,
+  ConfirmDialog,
+  Portal,
+} from "../components/admin/ui";
+import Breadcrumb from "../pages/admin/Breadcrumb";
 
-/* ─── Logout Confirmation Modal ─── */
-const LogoutModal = ({ onConfirm, onCancel }) => (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-    <div className="absolute inset-0 bg-[#050c2e]/60 backdrop-blur-sm" onClick={onCancel} />
-    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7 z-10">
-      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-50 mx-auto mb-5">
-        <LogOut className="text-red-500" size={22} />
-      </div>
-      <h3 className="text-center font-['Cormorant_Garamond'] font-semibold text-[#0A1172] text-xl mb-2 tracking-wide">
-        Sign Out?
-      </h3>
-      <p className="text-center text-sm text-gray-400 mb-7 leading-relaxed font-['DM_Sans']">
-        Are you sure you want to sign out of the admin panel?
-      </p>
-      <div className="flex gap-3">
-        <button
-          onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-500 text-sm font-medium hover:bg-gray-50 transition-colors font-['DM_Sans']"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={onConfirm}
-          className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors font-['DM_Sans']"
-        >
-          Sign Out
-        </button>
-      </div>
-    </div>
+const NAV = [
+  { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/admin/certificates", icon: FileText, label: "Certificates" },
+  { to: "/admin/settings", icon: Settings, label: "Settings" },
+];
+
+const TITLES = {
+  dashboard: "Dashboard",
+  certificates: "Certificates",
+  settings: "Account settings",
+};
+
+const initials = (admin) =>
+  (admin?.name && admin.name !== "Administrator"
+    ? admin.name
+    : admin?.email || "A"
+  )
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0].toUpperCase())
+    .join("");
+
+const Avatar = ({ admin, size = 36 }) => (
+  <div
+    className="flex flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#d8b65c] to-[#a8862f] font-semibold text-[#050c2e] ring-2 ring-white/10"
+    style={{ width: size, height: size, fontSize: size * 0.36 }}
+  >
+    {initials(admin)}
   </div>
 );
 
-/* ─── Nav Item ─── */
-const NavItem = ({ to, icon: Icon, label, collapsed, mobile, onClick }) => (
+const NavItem = ({ to, icon: Icon, label, collapsed, onClick, badge }) => (
   <NavLink
     to={to}
     onClick={onClick}
     className={({ isActive }) =>
-      `relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-150 group
-      ${collapsed && !mobile ? "justify-center" : ""}
-      ${isActive
-        ? "bg-white/10 text-white font-medium"
-        : "text-white/50 hover:text-white hover:bg-white/5"}`
+      `group relative flex h-10 items-center gap-3 rounded-xl px-3 text-[13.5px] transition-all duration-150
+      ${collapsed ? "justify-center" : ""}
+      ${isActive ? "bg-white/[.08] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,.06)]" : "text-white/55 hover:bg-white/[.04] hover:text-white"}`
     }
   >
     {({ isActive }) => (
       <>
         {isActive && (
-          <span className="absolute left-0 top-[20%] bottom-[20%] w-0.5 bg-amber-400 rounded-r-full" />
+          <span className="absolute -left-3 top-2 bottom-2 w-[3px] rounded-r-full bg-[#c9a84c]" />
         )}
-        <Icon size={17} className={isActive ? "text-amber-400 flex-shrink-0" : "flex-shrink-0"} />
-        {(!collapsed || mobile) && (
-          <span className="font-['DM_Sans'] truncate">{label}</span>
+        <Icon
+          size={18}
+          className={`flex-shrink-0 ${isActive ? "text-[#d8b65c]" : ""}`}
+        />
+        {!collapsed && (
+          <span className="flex-1 truncate font-medium">{label}</span>
         )}
-        {collapsed && !mobile && (
-          <div className="absolute left-full ml-2.5 px-2.5 py-1.5 bg-[#050c2e] text-white text-xs rounded-lg
-            opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-xl
-            border border-white/10 transition-opacity">
+        {!collapsed && badge > 0 && (
+          <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[10.5px] font-semibold text-amber-300">
+            {badge}
+          </span>
+        )}
+        {collapsed && (
+          <span className="pointer-events-none absolute left-full z-50 ml-3 whitespace-nowrap rounded-lg bg-[#050c2e] px-2.5 py-1.5 text-xs text-white opacity-0 shadow-xl ring-1 ring-white/10 transition-opacity group-hover:opacity-100">
             {label}
-          </div>
+          </span>
         )}
       </>
     )}
@@ -114,190 +100,326 @@ const NavItem = ({ to, icon: Icon, label, collapsed, mobile, onClick }) => (
 );
 
 const AdminLayout = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [showLogout, setShowLogout] = useState(false);
+  const { admin, logout, sessionExpired } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("admin.sidebar") === "collapsed";
+    } catch {
+      return false;
+    }
+  });
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const menuRef = useRef(null);
+  const mainRef = useRef(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin");
-    toast.success("Signed out successfully");
-    navigate("/admin/login");
-  };
+  /* ── Certificates are loaded once here and shared with every admin page ── */
+  const [certificates, setCertificates] = useState([]);
+  const [loadingCerts, setLoadingCerts] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
-  const pageTitle = () => {
-    if (location.pathname.includes("dashboard")) return "Dashboard";
-    if (location.pathname.includes("add-certificate")) return "Certificates";
-    return "Admin";
-  };
-
-  const navItems = [
-    { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { to: "/admin/add-certificate", icon: FilePlus, label: "Certificates" },
-  ];
-
-  const SidebarInner = ({ mobile = false }) => (
-    <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className={`flex items-center gap-3 px-4 py-5 border-b border-white/10
-        ${collapsed && !mobile ? "justify-center px-2" : ""}`}>
-        <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
-          <Shield size={18} className="text-amber-400" />
-        </div>
-        {(!collapsed || mobile) && (
-          <div>
-            <p className="text-white font-bold tracking-[0.12em] text-base leading-none font-['Cormorant_Garamond']">
-              СОГАAЗ
-            </p>
-            <p className="text-white/40 text-[9px] tracking-[0.18em] uppercase mt-0.5 font-['DM_Sans']">
-              Admin Panel
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Nav links */}
-      <nav className="flex-1 px-2 py-4 space-y-0.5">
-        {(!collapsed || mobile) && (
-          <p className="text-white/30 text-[9px] tracking-[0.18em] uppercase px-3 pb-2 font-['DM_Sans']">
-            Navigation
-          </p>
-        )}
-        {navItems.map((item) => (
-          <NavItem
-            key={item.to}
-            {...item}
-            collapsed={collapsed}
-            mobile={mobile}
-            onClick={() => mobile && setMobileOpen(false)}
-          />
-        ))}
-      </nav>
-
-      {/* Sign out */}
-      <div className="px-2 pb-5 pt-3 border-t border-white/10">
-        <button
-          onClick={() => setShowLogout(true)}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-            text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm group relative
-            ${collapsed && !mobile ? "justify-center" : ""}`}
-        >
-          <LogOut size={16} className="flex-shrink-0" />
-          {(!collapsed || mobile) && (
-            <span className="font-['DM_Sans']">Sign Out</span>
-          )}
-          {collapsed && !mobile && (
-            <div className="absolute left-full ml-2.5 px-2.5 py-1.5 bg-[#050c2e] text-white text-xs rounded-lg
-              opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-xl border border-white/10">
-              Sign Out
-            </div>
-          )}
-        </button>
-      </div>
-    </div>
+  // Any 401 from a protected call → back to login.
+  const handleApiError = useCallback(
+    (err, fallback = "Something went wrong") => {
+      if (err?.status === 401) {
+        sessionExpired();
+        toast.info("Your session has expired. Please sign in again.");
+        return;
+      }
+      toast.error(err?.message || fallback);
+    },
+    [sessionExpired],
   );
 
-  return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap');
-      `}</style>
+  const reloadCertificates = useCallback(async () => {
+    setLoadingCerts(true);
+    setLoadError("");
+    try {
+      const { certificates } = await certificateApi.list();
+      setCertificates(certificates);
+    } catch (err) {
+      setLoadError(err.message);
+      handleApiError(err, "Could not load certificates");
+    } finally {
+      setLoadingCerts(false);
+    }
+  }, [handleApiError]);
 
-      <div className="flex h-screen overflow-hidden bg-slate-50">
+  useEffect(() => {
+    reloadCertificates();
+  }, [reloadCertificates]);
 
-        {/* ── DESKTOP SIDEBAR ── */}
-        <aside className={`hidden lg:flex flex-col bg-gradient-to-b from-[#050c2e] to-[#0d1880]
-          transition-all duration-300 ease-in-out flex-shrink-0 relative shadow-xl
-          ${collapsed ? "w-[68px]" : "w-60"}`}>
-          <SidebarInner />
-          {/* Collapse button */}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="absolute -right-3 top-[76px] w-6 h-6 bg-white border border-slate-200
-              rounded-full flex items-center justify-center shadow-md hover:bg-slate-50 transition-colors z-20"
-          >
-            {collapsed
-              ? <ChevronRight size={12} className="text-[#0A1172]" />
-              : <ChevronLeft size={12} className="text-[#0A1172]" />
-            }
-          </button>
-        </aside>
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "admin.sidebar",
+        collapsed ? "collapsed" : "expanded",
+      );
+    } catch {
+      /* storage unavailable */
+    }
+  }, [collapsed]);
 
-        {/* ── MOBILE SIDEBAR ── */}
-        {mobileOpen && (
-          <>
-            <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-              onClick={() => setMobileOpen(false)}
+  useEffect(() => {
+    const close = (e) =>
+      menuRef.current &&
+      !menuRef.current.contains(e.target) &&
+      setMenuOpen(false);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setMenuOpen(false);
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [location.pathname]);
+
+  const expiringCount = certificates.filter((c) => {
+    if (!c.securityEndDate) return false;
+    const days = (new Date(c.securityEndDate) - Date.now()) / 86400000;
+    return days >= -1 && days <= 30;
+  }).length;
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+    toast.success("Signed out securely");
+    navigate("/admin/login", { replace: true });
+  };
+
+  const section = location.pathname.split("/")[2] || "dashboard";
+
+  const sidebar = (isMobile) => {
+    const isCollapsed = collapsed && !isMobile;
+    return (
+      <div className="flex h-full flex-col">
+        <div
+          className={`flex h-[68px] items-center gap-3 border-b border-white/[.06] ${isCollapsed ? "justify-center px-2" : "px-5"}`}
+        >
+          <BrandMark size={36} />
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <p className="font-display text-[19px] font-semibold leading-none tracking-[.14em] text-white">
+                СОГАAЗ
+              </p>
+              <p className="mt-1 text-[9.5px] uppercase tracking-[.24em] text-[#c9a84c]/70">
+                Admin Console
+              </p>
+            </div>
+          )}
+        </div>
+
+        <nav className="flex-1 space-y-1 px-3 py-5">
+          {!isCollapsed && (
+            <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-white/25">
+              Workspace
+            </p>
+          )}
+          {NAV.map((item) => (
+            <NavItem
+              key={item.to}
+              {...item}
+              collapsed={isCollapsed}
+              badge={item.to.endsWith("certificates") ? expiringCount : 0}
             />
-            <aside className="fixed left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-[#050c2e] to-[#0d1880]
-              z-50 lg:hidden shadow-2xl">
-              <button
-                onClick={() => setMobileOpen(false)}
-                className="absolute right-3 top-3 w-8 h-8 flex items-center justify-center
-                  rounded-full bg-white/10 text-white/60 hover:text-white transition-colors"
-              >
-                <X size={15} />
-              </button>
-              <SidebarInner mobile />
-            </aside>
-          </>
-        )}
+          ))}
 
-        {/* ── MAIN CONTENT AREA ── */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {!isCollapsed && (
+            <p className="px-3 pb-2 pt-6 text-[10px] font-semibold uppercase tracking-[.2em] text-white/25">
+              Public
+            </p>
+          )}
+          {isCollapsed && <div className="my-4 border-t border-white/[.06]" />}
+          <a
+            href="/verify-certificate"
+            target="_blank"
+            rel="noreferrer"
+            className={`group relative flex h-10 items-center gap-3 rounded-xl px-3 text-[13.5px] text-white/55 transition-all hover:bg-white/[.04] hover:text-white ${isCollapsed ? "justify-center" : ""}`}
+          >
+            <ExternalLink size={18} className="flex-shrink-0" />
+            {!isCollapsed && (
+              <span className="font-medium">Verification page</span>
+            )}
+          </a>
+        </nav>
 
-          {/* TOP NAVBAR */}
-          <header className="bg-white border-b border-slate-200 px-4 lg:px-6 py-3
-            flex items-center justify-between flex-shrink-0 shadow-sm z-30">
-            <div className="flex items-center gap-3 min-w-0">
-              <button
-                onClick={() => setMobileOpen(true)}
-                className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors flex-shrink-0"
-              >
-                <Menu size={20} />
-              </button>
-              <div className="min-w-0">
-                <h1 className="text-[#0A1172] font-semibold text-base font-['Cormorant_Garamond'] tracking-wide leading-none">
-                  {pageTitle()}
-                </h1>
-                <Breadcrumb inline />
+        <div className="border-t border-white/[.06] p-3">
+          <div
+            className={`flex items-center gap-3 rounded-xl p-2 ${isCollapsed ? "justify-center" : "bg-white/[.03]"}`}
+          >
+            <Avatar admin={admin} size={34} />
+            {!isCollapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-medium text-white">
+                  {admin?.name || "Administrator"}
+                </p>
+                <p className="truncate text-[11.5px] text-white/40">
+                  {admin?.email}
+                </p>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600
-                transition-colors relative">
-                <Bell size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-400 rounded-full" />
-              </button>
-              <NavLink
-                to="/admin/add-certificate"
-                className="hidden sm:flex items-center gap-1.5 bg-[#0A1172] hover:bg-[#184DE5]
-                  text-white text-xs font-['DM_Sans'] font-medium px-3.5 py-2 rounded-xl transition-colors"
+            )}
+            {!isCollapsed && (
+              <button
+                onClick={() => setShowLogout(true)}
+                title="Sign out"
+                aria-label="Sign out"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-rose-500/15 hover:text-rose-300"
               >
-                <Plus size={14} />
-                Add Certificate
-              </NavLink>
-            </div>
-          </header>
-
-          {/* PAGE CONTENT */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-            <Outlet />
-          </main>
+                <LogOut size={16} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
+    );
+  };
 
-      {/* LOGOUT MODAL */}
-      {showLogout && (
-        <LogoutModal
-          onConfirm={handleLogout}
-          onCancel={() => setShowLogout(false)}
-        />
+  return (
+    <div className="flex h-screen overflow-hidden bg-[#f6f7fb] font-body text-slate-800">
+      {/* Desktop sidebar */}
+      <aside
+        className={`relative hidden flex-shrink-0 bg-[#050c2e] transition-[width] duration-300 ease-out lg:block ${collapsed ? "w-[76px]" : "w-[264px]"}`}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(24,77,229,.25),transparent_60%)]" />
+        <div className="relative h-full">{sidebar(false)}</div>
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="absolute -right-3 top-[22px] z-20 flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#0A1172] shadow-md ring-1 ring-slate-200 transition-colors hover:bg-slate-50"
+        >
+          {collapsed ? <ChevronsRight size={13} /> : <ChevronsLeft size={13} />}
+        </button>
+      </aside>
+
+      {/* Mobile sidebar */}
+      {mobileOpen && (
+        <Portal>
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div
+              className="absolute inset-0 bg-[#050c2e]/60 backdrop-blur-sm"
+              onClick={() => setMobileOpen(false)}
+            />
+            <aside className="admin-fade-up absolute inset-y-0 left-0 w-[280px] bg-[#050c2e] shadow-2xl">
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="absolute right-3 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-white"
+              >
+                <X size={18} />
+              </button>
+              {sidebar(true)}
+            </aside>
+          </div>
+        </Portal>
       )}
-    </>
+
+      {/* Main */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="z-30 flex h-[68px] flex-shrink-0 items-center justify-between gap-4 border-b border-slate-200/70 bg-white/80 px-4 backdrop-blur-xl lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <button
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="min-w-0">
+              <Breadcrumb />
+              <h1 className="truncate font-display text-[22px] font-semibold leading-tight text-[#0A1172]">
+                {TITLES[section] || "Admin"}
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex flex-shrink-0 items-center gap-2">
+            <Link to="/admin/certificates?new=1" className="hidden sm:block">
+              <Button size="sm" icon={Plus}>
+                New certificate
+              </Button>
+            </Link>
+
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen((o) => !o)}
+                className="flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-slate-100"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+              >
+                <Avatar admin={admin} size={32} />
+                <ChevronDown
+                  size={14}
+                  className={`hidden text-slate-400 transition-transform sm:block ${menuOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {menuOpen && (
+                <div
+                  role="menu"
+                  className="admin-scale-in absolute right-0 mt-2 w-64 overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-200/80"
+                >
+                  <div className="border-b border-slate-100 px-4 py-3.5">
+                    <p className="truncate text-sm font-medium text-slate-900">
+                      {admin?.name || "Administrator"}
+                    </p>
+                    <p className="truncate text-xs text-slate-500">
+                      {admin?.email}
+                    </p>
+                  </div>
+                  <div className="p-1.5">
+                    <Link
+                      to="/admin/settings"
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    >
+                      <Settings size={15} /> Account settings
+                    </Link>
+                    <button
+                      onClick={() => setShowLogout(true)}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-rose-600 hover:bg-rose-50"
+                    >
+                      <LogOut size={15} /> Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <main ref={mainRef} className="admin-scroll flex-1 overflow-y-auto">
+          <div
+            key={location.pathname}
+            className="admin-fade-up mx-auto w-full max-w-[1400px] p-4 sm:p-6 lg:p-8"
+          >
+            <Outlet
+              context={{
+                certificates,
+                setCertificates,
+                loadingCerts,
+                loadError,
+                reloadCertificates,
+                handleApiError,
+              }}
+            />
+          </div>
+        </main>
+      </div>
+
+      <ConfirmDialog
+        open={showLogout}
+        onClose={() => setShowLogout(false)}
+        onConfirm={handleLogout}
+        loading={loggingOut}
+        icon={LogOut}
+        title="Sign out?"
+        description="You will need your email and password to sign back in."
+        confirmLabel="Sign out"
+      />
+    </div>
   );
 };
 
