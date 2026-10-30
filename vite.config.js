@@ -9,4 +9,10 @@ export default defineConfig({
     react(), tailwindcss(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  server: {
+    // Local dev: forward /api to the Fastify backend (cd backend && npm run dev)
+    proxy: {
+      '/api': 'http://localhost:5000',
+    },
+  },
 })

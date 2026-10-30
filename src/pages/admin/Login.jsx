@@ -1,199 +1,277 @@
-import { EyeOff, Eye, Shield } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
 import { useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+  AlertCircle,
+  ArrowRight,
+  FileCheck2,
+  Lock,
+  Mail,
+  ShieldCheck,
+  Timer,
+} from "lucide-react";
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import {
+  AdminSplash,
+  BrandMark,
+  PasswordInput,
+} from "../../components/admin/ui";
+
+const darkInput =
+  "w-full h-12 rounded-xl bg-white/[.04] pl-11 pr-4 text-[14px] text-white placeholder:text-white/25 ring-1 ring-inset ring-white/10 outline-none transition-all hover:ring-white/20 focus:bg-white/[.06] focus:ring-2 focus:ring-[#c9a84c]/70";
+
+const FEATURES = [
+  {
+    icon: FileCheck2,
+    title: "Certificate registry",
+    text: "Issue, update and track every vessel certificate in one place.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Bank-grade security",
+    text: "Encrypted HTTPS sessions, httpOnly cookies and brute-force lockout.",
+  },
+  {
+    icon: Timer,
+    title: "Expiry intelligence",
+    text: "See what expires next before it becomes a problem.",
+  },
+];
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const { status, login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  const redirectTo = location.state?.from?.startsWith("/admin")
+    ? location.state.from
+    : "/admin/dashboard";
+
+  if (status === "checking") return <AdminSplash />;
+  if (status === "authenticated") return <Navigate to={redirectTo} replace />;
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem("admin", "true");
-      toast.success("Welcome back!");
-      navigate("/admin/dashboard");
-    } catch {
-      toast.error("Invalid credentials. Please try again.");
+      const admin = await login(email.trim(), password);
+      toast.success(`Welcome back, ${admin.name || "Administrator"}`);
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      setError(err.message);
+      setPassword("");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
-        @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes pulse { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.08);opacity:.9} }
-        .login-anim { animation: fadeUp .55s ease forwards; }
-        .glow-1 { animation: pulse 7s ease-in-out infinite; }
-        .glow-2 { animation: pulse 9s ease-in-out infinite reverse; }
-        .gold-shimmer {
-          background: linear-gradient(135deg,#c9a84c 0%,#e8c96a 50%,#c9a84c 100%);
-          background-size:200% auto;
-          transition: background-position .4s ease, box-shadow .3s ease;
-        }
-        .gold-shimmer:hover { background-position:right center; }
-        .gold-shimmer:disabled { opacity:.55; cursor:not-allowed; }
-      `}</style>
-
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#050c2e] px-4">
-        {/* Glows */}
+    <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr] bg-[#050c2e] font-body">
+      {/* ── Brand panel ── */}
+      <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden p-12 xl:p-16">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,#1a2a9c_0%,#0a1172_35%,#050c2e_75%)]" />
         <div
-          className="glow-1 absolute w-[500px] h-[500px] rounded-full -top-24 -right-24 pointer-events-none"
+          className="absolute inset-0 opacity-[.07]"
           style={{
-            background:
-              "radial-gradient(circle,rgba(24,77,229,.18) 0%,transparent 70%)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px)",
+            backgroundSize: "56px 56px",
+            maskImage:
+              "radial-gradient(ellipse at 30% 30%,black,transparent 70%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse at 30% 30%,black,transparent 70%)",
           }}
         />
-        <div
-          className="glow-2 absolute w-[360px] h-[360px] rounded-full -bottom-12 -left-12 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle,rgba(10,17,114,.35) 0%,transparent 70%)",
-          }}
-        />
-
-        {/* Grid overlay */}
+        {/* Waves */}
         <svg
-          className="absolute inset-0 w-full h-full opacity-[0.04] pointer-events-none"
-          xmlns="http://www.w3.org/2000/svg"
+          className="absolute bottom-0 left-0 w-full opacity-[.18]"
+          viewBox="0 0 1200 320"
+          preserveAspectRatio="none"
+          aria-hidden="true"
         >
-          <defs>
-            <pattern
-              id="g"
-              width="60"
-              height="60"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M60 0L0 0 0 60"
-                fill="none"
-                stroke="#4a6fa5"
-                strokeWidth=".5"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#g)" />
+          <path
+            d="M0 220 C 200 160 400 280 600 220 S 1000 160 1200 220 V320 H0Z"
+            fill="#184de5"
+          />
+          <path
+            d="M0 260 C 250 210 450 310 700 255 S 1050 215 1200 260 V320 H0Z"
+            fill="#c9a84c"
+            opacity=".55"
+          />
         </svg>
 
-        {/* Card */}
-        <div className="login-anim relative z-10 w-full max-w-md">
-          <div
-            className="rounded-2xl p-10 border border-amber-300/10 shadow-[0_25px_60px_rgba(0,0,0,.5)]"
-            style={{
-              background:
-                "linear-gradient(145deg,rgba(8,16,60,.97),rgba(5,12,46,.99))",
-            }}
-          >
-            {/* Logo */}
-            <div className="flex flex-col items-center mb-8">
-              <div className="w-14 h-14 rounded-2xl bg-amber-400/10 border border-amber-400/25 flex items-center justify-center mb-4">
-                <Shield size={26} className="text-amber-400" />
-              </div>
-              <h1 className="text-3xl font-['Cormorant_Garamond'] font-semibold text-stone-100 tracking-[.15em]">
-                СОГАAЗ
-              </h1>
-              <p className="text-[10px] font-['DM_Sans'] text-amber-400/60 tracking-[.22em] uppercase mt-1">
-                Maritime Insurance Portal
-              </p>
-            </div>
-
-            {/* Divider */}
-            <div
-              className="h-px mb-7"
-              style={{
-                background:
-                  "linear-gradient(90deg,transparent,rgba(201,168,76,.25),transparent)",
-              }}
-            />
-
-            <p className="text-center text-[13px] font-['DM_Sans'] text-stone-300/45 mb-7 tracking-wide">
-              Secure Administrator Access
+        <div className="relative flex items-center gap-3.5">
+          <BrandMark size={44} />
+          <div>
+            <p className="font-display text-2xl font-semibold tracking-[.16em] text-white leading-none">
+              СОГАAЗ
             </p>
-
-            <form onSubmit={handleLogin} className="space-y-4">
-              {/* Email */}
-              <div>
-                <label className="block text-[10.5px] font-['DM_Sans'] font-semibold tracking-[.16em] uppercase text-amber-400/60 mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="admin@sogaaz.ru"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full bg-white/[.04] border border-amber-300/15 focus:border-amber-400/50
-                    focus:bg-white/[.07] text-stone-100 placeholder-stone-300/30 text-sm font-['DM_Sans']
-                    px-4 py-3 rounded-xl outline-none transition-all
-                    focus:ring-2 focus:ring-amber-400/8"
-                />
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-[10.5px] font-['DM_Sans'] font-semibold tracking-[.16em] uppercase text-amber-400/60 mb-1.5">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full bg-white/[.04] border border-amber-300/15 focus:border-amber-400/50
-                      focus:bg-white/[.07] text-stone-100 placeholder-stone-300/30 text-sm font-['DM_Sans']
-                      px-4 py-3 pr-11 rounded-xl outline-none transition-all
-                      focus:ring-2 focus:ring-amber-400/8"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-amber-400/40 hover:text-amber-400/70 transition-colors"
-                  >
-                    {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="gold-shimmer w-full py-3.5 rounded-xl text-[#050c2e] text-sm font-['DM_Sans']
-                    font-semibold tracking-[.06em] uppercase shadow-[0_4px_20px_rgba(201,168,76,.0)]
-                    hover:shadow-[0_4px_20px_rgba(201,168,76,.4)] transition-shadow"
-                >
-                  {loading ? "Authenticating…" : "Sign In"}
-                </button>
-              </div>
-            </form>
-
-            {/* Footer */}
-            <div
-              className="h-px mt-8 mb-4"
-              style={{
-                background:
-                  "linear-gradient(90deg,transparent,rgba(201,168,76,.15),transparent)",
-              }}
-            />
-            <p className="text-center text-[11px] font-['DM_Sans'] text-stone-300/20">
-              © 2025 СОГАAЗ · All rights reserved
+            <p className="mt-1 text-[10px] uppercase tracking-[.28em] text-[#c9a84c]/80">
+              Maritime Insurance
             </p>
           </div>
         </div>
-      </div>
-    </>
+
+        <div className="relative max-w-lg">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/[.06] px-3 py-1 text-[11px] uppercase tracking-[.2em] text-[#e2c77a] ring-1 ring-white/10">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+            Administration Console
+          </p>
+          <h1 className="font-display text-5xl xl:text-[3.6rem] font-semibold leading-[1.05] text-white">
+            Trusted cover for
+            <span className="block bg-gradient-to-r from-[#e8cf86] to-[#c9a84c] bg-clip-text text-transparent">
+              every voyage.
+            </span>
+          </h1>
+          <div className="mt-10 space-y-5">
+            {FEATURES.map(({ icon: Icon, title, text }) => (
+              <div key={title} className="flex gap-4">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white/[.06] ring-1 ring-white/10">
+                  <Icon size={18} className="text-[#d8b65c]" />
+                </div>
+                <div>
+                  <p className="text-[14px] font-medium text-white">{title}</p>
+                  <p className="mt-0.5 text-[13px] leading-relaxed text-white/45">
+                    {text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="relative text-xs text-white/30">
+          © {new Date().getFullYear()} СОГАAЗ · Authorised personnel only
+        </p>
+      </aside>
+
+      {/* ── Form panel ── */}
+      <main className="relative flex items-center justify-center px-5 py-12 sm:px-8 lg:bg-[#070f38] lg:border-l lg:border-white/[.06]">
+        <div className="absolute inset-0 lg:hidden bg-[radial-gradient(ellipse_at_top,#1a2a9c_0%,#050c2e_60%)]" />
+
+        <div className="admin-fade-up relative w-full max-w-[400px]">
+          <div className="mb-10 flex flex-col items-center text-center lg:items-start lg:text-left">
+            <div className="mb-6 flex items-center gap-3 lg:hidden">
+              <BrandMark size={44} />
+              <p className="font-display text-2xl font-semibold tracking-[.16em] text-white">
+                СОГАAЗ
+              </p>
+            </div>
+            <h2 className="font-display text-[2.4rem] font-semibold leading-tight text-white">
+              Sign in
+            </h2>
+            <p className="mt-2 text-[14px] text-white/45">
+              Access the certificate administration console.
+            </p>
+          </div>
+
+          {error && (
+            <div
+              role="alert"
+              className="admin-scale-in mb-5 flex items-start gap-2.5 rounded-xl bg-rose-500/10 px-4 py-3 text-[13px] text-rose-200 ring-1 ring-inset ring-rose-400/25"
+            >
+              <AlertCircle
+                size={16}
+                className="mt-0.5 flex-shrink-0 text-rose-400"
+              />
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5" noValidate={false}>
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-[12.5px] font-medium text-white/70"
+              >
+                Email address
+              </label>
+              <div className="relative">
+                <Mail
+                  size={17}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
+                />
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="username"
+                  autoFocus
+                  required
+                  maxLength={254}
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={darkInput}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-[12.5px] font-medium text-white/70"
+              >
+                Password
+              </label>
+              <div className="relative [&_button]:text-white/35 [&_button:hover]:text-white/70">
+                <Lock
+                  size={17}
+                  className="pointer-events-none absolute left-4 top-6 -translate-y-1/2 text-white/30 z-10"
+                />
+                <PasswordInput
+                  id="password"
+                  autoComplete="current-password"
+                  required
+                  maxLength={128}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={darkInput}
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative mt-2 flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-b from-[#e2c473] to-[#c09a3c] text-[14px] font-semibold text-[#050c2e] shadow-[0_10px_30px_-10px_rgba(201,168,76,.7)] transition-all hover:brightness-105 active:scale-[.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+              {loading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#050c2e]/30 border-t-[#050c2e]" />
+                  Verifying…
+                </>
+              ) : (
+                <>
+                  Sign in securely
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 flex items-center gap-3 rounded-xl bg-white/[.03] px-4 py-3 ring-1 ring-white/[.06]">
+            <ShieldCheck
+              size={18}
+              className="flex-shrink-0 text-emerald-400/80"
+            />
+            <p className="text-[12px] leading-relaxed text-white/40">
+              Protected connection. Accounts lock for 15 minutes after 5 failed
+              attempts.
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 

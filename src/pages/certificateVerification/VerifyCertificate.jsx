@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { db } from "../../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
 import { useParams } from "react-router-dom";
+import { certificateApi } from "../../lib/api";
+import { formatDate, getStatus, verifyUrl } from "../../utils/certificate";
 import {
   Shield,
   Search,
   RefreshCw,
   Download,
   CheckCircle2,
-  AlertCircle,
+  ChevronRight,
   Info,
 } from "lucide-react";
 import jsPDF from "jspdf";
@@ -20,6 +20,8 @@ const VerifyCertificate = () => {
   const [doc, setDoc] = useState("");
   const [imo, setImo] = useState("");
   const [result, setResult] = useState(null);
+  // One IMO can hold several certificates — let the visitor pick one.
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const { docId } = useParams();
@@ -67,10 +69,20 @@ const VerifyCertificate = () => {
     insurer: data.insurerName,
     policy: data.policyType,
     nationality: data.shipNationality,
-    start: data.securityStartDate?.toDate()?.toLocaleDateString() || "—",
-    expiry: data.securityEndDate?.toDate()?.toLocaleDateString() || "—",
+    start: formatDate(data.securityStartDate),
+    expiry: formatDate(data.securityEndDate),
     remarks: data.remarks,
   });
+
+  const showResults = (list) => {
+    if (list.length === 1) {
+      setMatches([]);
+      setResult(parseResult(list[0]));
+    } else {
+      setResult(null);
+      setMatches(list);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,33 +105,19 @@ const VerifyCertificate = () => {
     setLoading(true);
 
     try {
-      let q;
-
-      if (cleanDoc) {
-        q = query(
-          collection(db, "certificates"),
-          where("documentNumber", "==", cleanDoc),
-        );
-      } else {
-        q = query(
-          collection(db, "certificates"),
-          where("imoNumber", "==", cleanImo),
-        );
-      }
-
-      const snap = await getDocs(q);
-
-      if (!snap.empty) {
-        const data = snap.docs[0].data();
-        setResult(parseResult(data));
-        toast.success("Certificate verified");
-      } else {
-        toast.error("No matching certificate");
-        setResult(null);
-      }
+      const { certificates } = await certificateApi.verify(
+        cleanDoc ? { documentNumber: cleanDoc } : { imo: cleanImo },
+      );
+      showResults(certificates);
+      toast.success(
+        certificates.length > 1
+          ? `${certificates.length} certificates found for this vessel`
+          : "Certificate verified",
+      );
     } catch (err) {
-      console.error(err);
-      toast.error("Error");
+      setResult(null);
+      setMatches([]);
+      toast.error(err.status === 404 ? "No matching certificate" : err.message);
     } finally {
       setLoading(false);
     }
@@ -160,15 +158,10 @@ const VerifyCertificate = () => {
   const fetchByDoc = async (num) => {
     setLoading(true);
     try {
-      const q = query(
-        collection(db, "certificates"),
-        where("documentNumber", "==", num),
-      );
-      const snap = await getDocs(q);
-      if (!snap.empty) setResult(parseResult(snap.docs[0].data()));
-      else toast.error("Certificate not found.");
-    } catch {
-      toast.error("Error fetching certificate.");
+      const { certificates } = await certificateApi.verify({ documentNumber: num });
+      showResults(certificates);
+    } catch (err) {
+      toast.error(err.status === 404 ? "Certificate not found." : err.message);
     } finally {
       setLoading(false);
     }
@@ -176,6 +169,7 @@ const VerifyCertificate = () => {
 
   const handleReset = () => {
     setResult(null);
+    setMatches([]);
     setDoc("");
     setImo("");
   };
@@ -194,7 +188,6 @@ const VerifyCertificate = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
         * { user-select:none; -webkit-user-select:none; }
         @keyframes spin { to{transform:rotate(360deg)} }
         .spin { animation:spin .8s linear infinite; }
@@ -214,7 +207,57 @@ const VerifyCertificate = () => {
 
         <div className="max-w-[620px] mx-auto relative z-10">
           {/* ── SEARCH FORM ── */}
-          {!result && (
+          {!result && matches.length > 0 && (
+            <div className="fade-up space-y-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="text-2xl font-['Cormorant_Garamond'] font-semibold text-[#0A1172]">
+                    {matches.length} certificates found
+                  </h2>
+                  <p className="text-sm font-['DM_Sans'] text-slate-500 truncate">
+                    {matches[0].shipName} · IMO {matches[0].imoNumber} — select one to view
+                  </p>
+                </div>
+                <button
+                  onClick={handleReset}
+                  className="flex-shrink-0 flex items-center gap-2 text-sm font-['DM_Sans'] font-medium text-[#0A1172]
+                    border border-[#0A1172]/20 px-4 py-2 rounded-xl hover:bg-[#0A1172]/4 transition-colors"
+                >
+                  <RefreshCw size={14} /> New search
+                </button>
+              </div>
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+                {matches.map((m, i) => {
+                  const st = getStatus(m);
+                  return (
+                    <button
+                      key={`${m.documentNumber}-${i}`}
+                      onClick={() => setResult(parseResult(m))}
+                      className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-[#0A1172]/8 flex items-center justify-center flex-shrink-0">
+                        <Shield size={18} className="text-[#0A1172]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-['DM_Sans'] font-semibold text-[#0A1172] truncate">
+                          {m.documentNumber}
+                        </p>
+                        <p className="text-xs font-['DM_Sans'] text-slate-500">
+                          {m.policyType || "—"} · valid until {formatDate(m.securityEndDate)}
+                        </p>
+                      </div>
+                      <span className={`hidden sm:inline text-[11px] font-['DM_Sans'] font-medium px-2.5 py-0.5 rounded-full ring-1 ring-inset ${st.badge}`}>
+                        {st.label}
+                      </span>
+                      <ChevronRight size={16} className="text-slate-300 flex-shrink-0" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {!result && matches.length === 0 && (
             <div className="fade-up">
               {/* Hero */}
               <div className="text-center mb-10">
@@ -428,7 +471,7 @@ const VerifyCertificate = () => {
                       {result?.certificate && (
                         <div className=" absolute  right-3 bg-white p-2 rounded-xl shadow-xl border border-gray-200">
                           <QRCodeCanvas
-                            value={`https://www.sogaaz.ru/verify/${encodeURIComponent(result.certificate)}`}
+                            value={verifyUrl(result.certificate)}
                             size={80}
                           />
                         </div>

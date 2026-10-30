@@ -1,9 +1,18 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { AdminSplash } from "../components/admin/ui";
 
 const ProtectedRoute = ({ children }) => {
-  const isAuth = localStorage.getItem("admin");
+  const { status } = useAuth();
+  const location = useLocation();
 
-  return isAuth === "true" ? children : <Navigate to="/admin/login" />;
+  if (status === "checking") return <AdminSplash />;
+  if (status !== "authenticated") {
+    return (
+      <Navigate to="/admin/login" replace state={{ from: location.pathname }} />
+    );
+  }
+  return children;
 };
 
 export default ProtectedRoute;
